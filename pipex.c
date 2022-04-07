@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sorkim <sorkim@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: sorkim <sorkim@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/08/02 09:54:02 by sorkim            #+#    #+#             */
-/*   Updated: 2022/04/07 14:26:05 by sorkim           ###   ########.fr       */
+/*   Created: 2022/03/31 10:54:17 by sorkim            #+#    #+#             */
+/*   Updated: 2022/04/07 16:01:49 by sorkim           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,32 +14,47 @@
 
 void	child_process(char **argv, char **envp, int *fd)
 {
-	int		filein;
+	int		infile;
 
-	filein = open(argv[1], O_RDONLY, 0777);
-	if (filein == -1)
+	infile = open(argv[1], O_RDONLY, 0777); //입력대신 읽어 올 파일을 open
+	if (infile == -1) //파일 없으면 err
 		error();
-	dup2(fd[1], STDOUT_FILENO);
-	dup2(filein, STDIN_FILENO);
+	//동일한 파일(pipe)에 대해 참조하는 fd로 표준 입출력 변경
+	dup2(fd[1], STDOUT_FILENO); //표준 출력을 file descriptor가 가리키는 파일로 변경 
+	//모니터에 출력될 내용이 fd[1]이 가리키는 파일로 출력 됨
+	dup2(infile, STDIN_FILENO); //표준 입력을 infile로 변경
+	//키보드로 입력될 내용이 infile로부터 읽어오도록 변경됨
 	close(fd[0]);
+	//읽기용 file descriptor은 사용하지 않으므로 close
+	
 	//argv[2] == "ls -l"
 	execute(argv[2], envp);
+	//자식프로세스의 명령어로서 받은 인자와 이 명령어를 실행시킬 env(시스템 환경 변수)의 목록을 인자로 보내
+	//execute함수를 실행
 }
 
 void	parent_process(char **argv, char **envp, int *fd)
 {
-	int		fileout;
+	int		outfile;
 
-	fileout = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
-	if (fileout == -1)
+	//출력할 파일에 대해서 open //없으면 생성하고 기존에 있는 파일이면 내용을 새로 작성하기 위해 지움
+	outfile = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	if (outfile == -1) //open error
 		error();
-	dup2(fd[0], STDIN_FILENO);
-	dup2(fileout, STDOUT_FILENO);
+	//동일한 파일(pipe)에 대해 참조하는 fd로 표준 입출력 변경
+	dup2(fd[0], STDIN_FILENO); //표준 입력을 file descriptor가 가리키는 파일로 변경 
+	//키보드가 입력할 내용이 fd[0]이 가리키는 파일을 통해 입력됨
+	dup2(outfile, STDOUT_FILENO); //표준 출력을 outfile로 변경
+	//모니터에 출력할 내용이 outfile로 출력됨 
 	close(fd[1]);
+	//쓰기용 file descriptor은 사용하지 않으므로 close
 	execute(argv[3], envp);
+	//부모프로세스의 명령어로서 받은 인자와 이 명령어를 실행시킬 env(시스템 환경 변수)의 목록을 인자로 보내
+	//execute함수를 실행
 }
 
-//inputfile "ls -l" "wc -l" "outputfile"
+//./pipex inputfile "ls -l" "wc -l" "outputfile"
+// < inputfile {cmd1} {cmd2} > outputfile
 //envp 는 env 명령 실행했을때 한줄씩 나누어서 받음
 int	main(int argc, char **argv, char **envp)
 {
@@ -71,14 +86,15 @@ int	main(int argc, char **argv, char **envp)
 			child_process(argv, envp, fd);
 		//자식 프로세스 종료까지 기다리지 않음.
 		//비동기적으로 실행
-		
+		//-> pipe 하면 파일에 쓰여지지 않는 경우 쓰여질때까지 읽기를 하지 않고 대기
+		//자식의 자원을 회수하기는 해야해서 waitpid, WNOHANG 옵션을 통해 자식을 기다리지 않고 비동기적으로 수행
 		waitpid(pid1, NULL, WNOHANG);
-
 		parent_process(argv, envp, fd);
 	}
 	else
 	{
 		ft_putstr_fd("Error : argument\n", 2);
-		ft_putstr_fd("Argument form : ./pipex <file1> <cmd1> <cmd2> <file2>\n", 1);
+		ft_putstr_fd("argument : ./pipex <file1> <cmd1> <cmd2> <file2>\n", 1);
 	}
 	return (0);
+}

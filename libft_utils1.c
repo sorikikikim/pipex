@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft_utils1.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sorkim <sorkim@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: sorkim <sorkim@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/08/02 09:54:02 by sorkim            #+#    #+#             */
-/*   Updated: 2022/04/06 23:57:37 by sorkim           ###   ########.fr       */
+/*   Created: 2022/04/01 03:51:24 by sorkim            #+#    #+#             */
+/*   Updated: 2022/04/07 14:32:12 by sorkim           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,23 +92,3 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	tab[i] = '\0';
 	return (tab);
 }
-
-// char	*ft_strdup(char *str)
-// {
-// 	size_t	len;
-// 	size_t	i;
-// 	char	*s;
-
-// 	len = ft_strlen(str);
-// 	i = 0;
-// 	s = (char *)malloc(sizeof(char) * (len + 1));
-// 	if (s == 0)
-// 		return (0);
-// 	while (i < len)
-// 	{
-// 		s[i] = str[i];
-// 		i++;
-// 	}
-// 	s[i] = 0;
-// 	return (s);
-// }
