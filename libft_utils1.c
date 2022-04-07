@@ -6,7 +6,7 @@
 /*   By: sorkim <sorkim@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/01 03:51:24 by sorkim            #+#    #+#             */
-/*   Updated: 2022/04/07 14:32:12 by sorkim           ###   ########.fr       */
+/*   Updated: 2022/04/07 16:38:40 by sorkim           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ static size_t	ft_strlen(const char *s)
 		i++;
 	return (i);
 }
-
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {

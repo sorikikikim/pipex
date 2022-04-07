@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: sorkim <sorkim@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/08/02 09:54:02 by sorkim            #+#    #+#             */
-/*   Updated: 2022/04/07 15:41:19 by sorkim           ###   ########.fr       */
+/*   Created: 2022/03/27 09:54:02 by sorkim            #+#    #+#             */
+/*   Updated: 2022/04/07 16:48:41 by sorkim           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,9 @@
 # include <fcntl.h>
 
 //utils
-void	error(void);
-char	*find_path(char *cmd, char **envp);
-//int		get_next_line(char **line);
-void	execute(char *argv, char **envp);
+void	handling_error(void);
+char	*is_exist_path(char *cmd, char **envp);
+void	execute_cmd(char *argv, char **envp);
 
 //libft utils
 void	ft_putstr_fd(char *s, int fd);
